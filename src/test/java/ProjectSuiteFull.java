@@ -11,7 +11,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TestClass1.class
+    TestClass1.class,
+    TestClass2.class
 })
 public class ProjectSuiteFull {
   @BeforeClass

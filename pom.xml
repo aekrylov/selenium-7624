@@ -15,7 +15,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.11</version>
     </dependency>
 
     <dependency>
@@ -44,68 +44,58 @@
           <meminitial>128m</meminitial>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <inherited>true</inherited>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>ProjectSuiteFull.java</include>
+              </includes>
+              <skipTests>false</skipTests>
+              <argLine>-Xmx3g -XX:MaxPermSize=256m -XX:+HeapDumpOnOutOfMemoryError</argLine>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <parallel>all</parallel>
+          <threadCount>8</threadCount> <!-- NB: this is per CPU core, unless perCoreThreadCount is false -->
+          <!-- TODO WEBBPMNEXT-6376 tests hang for some reason when perCoreThreadCount is false -->
+          <threadCountSuites>2</threadCountSuites>
+          <threadCountClasses>3</threadCountClasses>
+          <threadCountMethods>5</threadCountMethods>
+          <systemPropertyVariables>
+            <application.url>${application.url}</application.url>
+            <selenium.grid.url>${selenium.grid.url}</selenium.grid.url>
+          </systemPropertyVariables>
+          <skipTests>false</skipTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <id>integration-tests</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <inherited>true</inherited>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-                <configuration>
-                  <includes>
-                    <include>ProjectSuiteFull.java</include>
-                  </includes>
-                  <skipTests>false</skipTests>
-                  <argLine>-Xmx3g -XX:MaxPermSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/dump.hprof</argLine>
-                </configuration>
-              </execution>
-            </executions>
-            <configuration>
-              <parallel>all</parallel>
-              <threadCount>8</threadCount> <!-- NB: this is per CPU core, unless perCoreThreadCount is false -->
-              <!-- TODO WEBBPMNEXT-6376 tests hang for some reason when perCoreThreadCount is false -->
-              <threadCountSuites>2</threadCountSuites>
-              <threadCountClasses>3</threadCountClasses>
-              <threadCountMethods>5</threadCountMethods>
-              <systemPropertyVariables>
-                <application.url>${application.url}</application.url>
-                <selenium.grid.url>${selenium.grid.url}</selenium.grid.url>
-              </systemPropertyVariables>
-              <skipTests>false</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>2.18.1</version>
-            <reportSets>
-              <reportSet>
-                <id>integration-tests</id>
-                <reports>
-                  <report>failsafe-report-only</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-  </profiles>
-
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.18.1</version>
+        <reportSets>
+          <reportSet>
+            <id>integration-tests</id>
+            <reports>
+              <report>failsafe-report-only</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
